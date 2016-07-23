@@ -108,6 +108,8 @@ module Parser =
 
     let private alphanumeric c = isLetter c || isDigit c
     
+    let private isSymbol c = alphanumeric c || c = '_'
+    
     let private pidentifier =
         let first c = isLetter c
         
@@ -120,7 +122,7 @@ module Parser =
         ]
 
     let private pstr1 =
-        (many1Satisfy alphanumeric)
+        (many1Satisfy isSymbol)
 
     let private plist p sep =
         sepBy1 p (pchar sep .>> ws)
