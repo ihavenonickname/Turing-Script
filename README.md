@@ -85,18 +85,18 @@ where:
 
 Do not forget the comma (`,`) between transitions.
 
-The (bad writen) context free grammar is as follow:
+The (**bad** written) context free grammar is as follow:
 
 ```
 identifier          := ([A-Za-z])([A-Za-z0-9_])* 
 
 symbol              := ([A-Za-z0-9_])+
 
+state               := ([A-Za-z0-9])+
+
 tape-literal        := symbol | symbol, tape-literal
 
 direction           := 'right' | 'left'
-
-state               := <letter or number> | <letter or number>, state
 
 states              := state | state, ','
 
