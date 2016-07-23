@@ -84,3 +84,36 @@ where:
 * `<tape>` is a tape of Turing machine. It is a sequence of symbols described above as `<char>`.
 
 Do not forget the comma (`,`) between transitions.
+
+The (bad writen) context free grammar is as follow:
+
+```
+identifier          := ([A-Za-z])([A-Za-z0-9_])* 
+
+symbol              := ([A-Za-z0-9_])+
+
+tape-literal        := symbol | symbol, tape-literal
+
+direction           := 'right' | 'left'
+
+state               := <letter or number> | <letter or number>, state
+
+states              := state | state, ','
+
+machine-name        := 'turing machine', identifier
+
+initial-state       := 'initial state is', state
+
+final-states        := 'set of final states is {', states, '}'
+
+transition          := 'in', state, 'reading', symbol, 'change to' state, 
+'write', symbol, 'move to', direction
+
+transitions         := transition | transition, ',\n'
+
+turing-machine-stmt := machine-name, initial-state, final-states, transitions
+
+tape-stmt           := 'tape', identifier, 'as', tape-literal
+
+run-stmt            := 'run', identifier, 'with', identifier
+```
