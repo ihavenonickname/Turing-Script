@@ -98,7 +98,7 @@ tape-literal        := symbol | symbol, tape-literal
 
 direction           := 'right' | 'left'
 
-states              := state | state, ','
+states              := state | state, ',', states
 
 machine-name        := 'turing machine', identifier
 
@@ -106,10 +106,10 @@ initial-state       := 'initial state is', state
 
 final-states        := 'set of final states is {', states, '}'
 
-transition          := 'in', state, 'reading', symbol, 'change to' state, 
+transition          := 'in', state, 'reading', symbol, 'change to', state, 
 'write', symbol, 'move to', direction
 
-transitions         := transition | transition, ',\n'
+transitions         := transition | transition, ',\n', transitions
 
 turing-machine-stmt := machine-name, initial-state, final-states, transitions
 
