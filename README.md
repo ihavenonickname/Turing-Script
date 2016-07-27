@@ -1,4 +1,4 @@
-# Turing-Script
+# Turing Script
 A small language for creating Turing machines
 
 This the interpreter of Turing Script.
@@ -87,9 +87,9 @@ in <state> reading <char> change to <state> write <char> move to [right|left],
 in <state> reading <char> change to <state> write <char> move to [right|left],
 in <state> reading <char> change to <state> write <char> move to [right|left]
 
-tape <tape-name> as <tape-lietral>
+tape <tape-name> as <tape-literal>
 
-run <machine-name> with <tape-name or tape-lietral>
+run <machine-name> with <tape-name or tape-literal>
 ```
 
 where:
