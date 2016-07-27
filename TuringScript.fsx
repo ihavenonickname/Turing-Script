@@ -20,6 +20,7 @@ module AST =
         | TuringMachine of string * machine
         | Tape of string * string
         | Run of string * string
+        | RunLiteralTape of string * string
 
 module TuringExecuter =
     open AST
@@ -110,6 +111,12 @@ module Parser =
     
     let private isSymbol c = alphanumeric c || c = '_'
     
+    let private pcomment =
+        str "//" >>. skipManySatisfy (fun c -> c <> '\n') >>. newline
+        
+    let private pendline =
+        many1 (pcomment <|> newline) >>. ws
+    
     let private pidentifier =
         let first c = isLetter c
         
@@ -144,7 +151,7 @@ module Parser =
 
     let private prun =
         let s1 = str "run " >>. pidentifier
-        let s2 = str " with " >>. pidentifier
+        let s2 = str " with " >>. pstr1
         
         pipe2 s1 s2 (fun machine tape -> Run (machine, tape))
 
@@ -192,9 +199,9 @@ module Parser =
             ptape
             prun
         ]
-
+    
     let private pprogram =
-        (ws >>. sepBy pstatement (many1 newline)) .>> (ws >>. eof)
+        ws >>. pendline >>. sepBy1 (ws >>. pstatement) pendline .>> eof
     
     let parse input =
         match run pprogram input with
@@ -222,13 +229,17 @@ module Interpreter =
         printf "%s %s %s after %d steps... Final tape:\n%s\n\n"
             machineName (toLower res) tapeName count (mapToStr finalTape)
     
-    let private interpretRun tapeName machineName vars =
-        let t = Map.find tapeName vars
+    let private interpretRun tapeNameOrLiteral machineName vars =
+        let t = Map.tryFind tapeNameOrLiteral vars
         let m = Map.find machineName vars
         
         match t, m with
-        | TapeVar tape, MachineVar machine ->
+        | Some (TapeVar tape), MachineVar machine ->
+            let tapeName = tapeNameOrLiteral
             executeAndPrint tapeName machineName tape machine
+        | _, MachineVar machine ->
+            let tapeLiteral = tapeNameOrLiteral
+            executeAndPrint "annonymous tape" machineName tapeLiteral machine
         | _ -> failwith "Incorrect variable type"
     
     let private interpretStatement statement vars = 
@@ -239,7 +250,7 @@ module Interpreter =
             vars |>  Map.add name (MachineVar machine)
         | Run (machineName, tapeName) ->
             interpretRun tapeName machineName vars
-            vars  
+            vars
         
     let rec private interpretHelper statements vars =
         match statements with
