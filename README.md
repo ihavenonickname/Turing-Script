@@ -19,23 +19,36 @@ It will load the content of `exemple.txt` and interpret as source code.
 The language accepted for this interpreter is really small. A valid code is, for example:
 
 ```
-turing machine machine1
+// I'm creating a georgeous Turing machine.
+turing machine tm1
+initial state is q0
+set of final states is {q0, q2}
+in q0 reading 0 change to q1 write 1 move to right,
+in q1 reading _ change to q2 write _ move to right,
+in q2 reading 1 change to q3 write 0 move to right,
+in q3 reading _ change to q0 write _ move to right
+
+// Now I'm creating an enigmatic tape.
+tape tape1 as 0_1_0_1_0_1_0_1_0_1
+
+// I wonder if tm1 would accept tape1. Let me see.
+run tm1 with tape1
+
+// Comments *almost* everywhere:
+// Can't be inside a statement.
+
+// Turing would be proud because of this glorious machine.
+turing machine foo
 initial state is q0
 set of final states is {q2}
-in q0 reading 0 change to q0 write n move to right,
-in q0 reading 1 change to q1 write n move to right,
-in q1 reading 0 change to q1 write y move to right,
-in q1 reading _ change to q2 write y move to right
+in q0 reading b change to q1 write _ move to right,
+in q1 reading a change to q1 write _ move to right,
+in q1 reading r change to q2 write _ move to right
 
-tape t1 as 545454
-tape t2 as 001010001
-tape t3 as abcbbabc
-tape t4 as 010000000000000
-
-run machine1 with t1
-run machine1 with t2
-run machine1 with t3
-run machine1 with t4
+run foo with bar
+run foo with baaaar
+run foo with baaaaaaaaaaaaaaaar
+run foo with baz
 ```
 
 As one can see, 3 things can be done:
@@ -45,17 +58,20 @@ As one can see, 3 things can be done:
 
 The only statement that produces output is `run`. The output of the later program is:
 ```
-machine1 rejected t1 after 0 steps... Final tape:
-545454
+tm1 accepted tape1 after 20 steps... Final tape:
+1_0_1_0_1_0_1_0_1_0_
 
-machine1 rejected t2 after 4 steps... Final tape:
-nnny10001
+foo accepted annonymous tape after 3 steps... Final tape:
+___
 
-machine1 rejected t3 after 0 steps... Final tape:
-abcbbabc
+foo accepted annonymous tape after 6 steps... Final tape:
+______
 
-machine1 accepted t4 after 16 steps... Final tape:
-nnyyyyyyyyyyyyyy
+foo accepted annonymous tape after 18 steps... Final tape:
+__________________
+
+foo rejected annonymous tape after 2 steps... Final tape:
+__z
 ```
 
 One can create as many Turing machines and tapes as wanted.
@@ -71,9 +87,9 @@ in <state> reading <char> change to <state> write <char> move to [right|left],
 in <state> reading <char> change to <state> write <char> move to [right|left],
 in <state> reading <char> change to <state> write <char> move to [right|left]
 
-tape <tape-name> as <tape>
+tape <tape-name> as <tape-lietral>
 
-run <machine-name> with <tape-name>
+run <machine-name> with <tape-name or tape-lietral>
 ```
 
 where:
@@ -81,39 +97,6 @@ where:
 * `<state>` is the name of a state. It can be any sequence of letters and numerals.
 * `<char>` is a symbol. It can be a single letter, numeral or underline.
 * `<tape-name>` `<machine-name>` is a identifier. It can be any sequence of letter and numerals, starting with a letter.
-* `<tape>` is a tape of Turing machine. It is a sequence of symbols described above as `<char>`.
+* `<tape-literal>` is a tape of Turing machine. It is a sequence of symbols described above as `<char>`.
 
 Do not forget the comma (`,`) between transitions.
-
-The (**bad** written) context free grammar is as follow:
-
-```
-identifier          := ([A-Za-z])([A-Za-z0-9_])* 
-
-symbol              := ([A-Za-z0-9_])+
-
-state               := ([A-Za-z0-9])+
-
-tape-literal        := symbol | symbol, tape-literal
-
-direction           := 'right' | 'left'
-
-states              := state | state, ',', states
-
-machine-name        := 'turing machine', identifier
-
-initial-state       := 'initial state is', state
-
-final-states        := 'set of final states is {', states, '}'
-
-transition          := 'in', state, 'reading', symbol, 'change to', state, 
-'write', symbol, 'move to', direction
-
-transitions         := transition | transition, ',\n', transitions
-
-turing-machine-stmt := machine-name, initial-state, final-states, transitions
-
-tape-stmt           := 'tape', identifier, 'as', tape-literal
-
-run-stmt            := 'run', identifier, 'with', identifier
-```
